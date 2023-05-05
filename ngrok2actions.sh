@@ -26,16 +26,8 @@ if [[ -z "${SSH_PASSWORD}" && -z "${SSH_PUBKEY}" && -z "${GH_SSH_PUBKEY}" ]]; th
     exit 3
 fi
 
-# Install ngrok based on the OS type
-if [[ -n "$(uname | grep -i Linux)" ]]; then
-    echo -e "${INFO} Installing ngrok ..."
-    curl -fsSL https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip -o ngrok.zip
-    unzip ngrok.zip ngrok
-    rm ngrok.zip
-    chmod +x ngrok
-    sudo mv ngrok /usr/local/bin
-    ngrok -v
-elif [[ -n "$(uname | grep -i Darwin)" ]]; then
+# Install ngro
+if [[ -n "$(uname | grep -i Darwin)" ]]; then
     echo -e "${INFO} Installing ngrok ..."
     curl -fsSL https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-darwin-amd64.zip -o ngrok.zip
     unzip ngrok.zip ngrok
@@ -95,12 +87,6 @@ if [[ -e "${LOG_FILE}" && -z "${ERRORS_LOG}" ]]; then
             echo -e "${INFO} Telegram message sent successfully!"
         fi
     fi
-
-    # Output SSH and VNC URLs to console
-    echo -e "${Green_font_prefix}To connect to this session, copy and paste the following into a terminal:${Font_color_suffix}\n\n${SSH_CMD}\n\n${VNC_URL}\n\n${Green_background_prefix}TIPS:${Font_color_suffix} Run 'touch ${CONTINUE_FILE}' to continue to the next step."
-else
-    # Output error message if ngrok failed to start
-    echo -e "${ERROR} Failed to start ngrok proxy: $(cat ${LOG_FILE})"
 fi
 
 # Blocking loop to wait for user input to continue to the next step
