@@ -1,4 +1,4 @@
-name: 'SSH to GitHub Actions'
+name: 'SSH&VNC to GitHub Actions'
 author: 'Fangsongs'
 description: 'Connect to GitHub Actions VM via SSH for interactive debugging'
 inputs:
