@@ -1,6 +1,6 @@
-name: 'SSH&VNC to GitHub Actions'
+name: 'SSH & VNC to GitHub Actions'
 author: 'Fangsongs'
-description: 'Connect to GitHub Actions VM via SSH for interactive debugging'
+description: 'Connect to GitHub Actions VM via SSH & VNC for interactive debugging'
 inputs:
   mode:
     description: 'choose tmate or ngrok mode'
@@ -8,7 +8,9 @@ inputs:
     default: 'tmate'
 runs:
   using: "composite"
-  steps: 
+  steps:
+    - run: chmod +x $GITHUB_ACTION_PATH/*.sh
+      shell: bash
     - run: $GITHUB_ACTION_PATH/${{ inputs.mode }}2actions.sh
       shell: bash
 branding:
