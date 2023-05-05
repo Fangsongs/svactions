@@ -99,14 +99,34 @@ Run '\`touch ${CONTINUE_FILE}\`' to continue to the next step.
 else
     echo -e "${ERROR} Failed to start ngrok proxy: $(cat ${LOG_FILE})"
 fi
-
-while [[ ! -f "${CONTINUE_FILE}" ]]; do
-    echo -e "${INFO} Please run 'touch ${CONTINUE_FILE}' to continue ..."
-    sleep 10
-done
-
 rm -f "${CONTINUE_FILE}"
 
 echo -e "${INFO} Connect to Github Actions via SSH and VNC:"
 echo -e "${SSH_CMD}"
 echo -e "${VNC_URL}"
+while ((${PRT_COUNT:=1} <= ${PRT_TOTAL:=10})); do
+        SECONDS_LEFT=${PRT_INTERVAL_SEC:=10}
+        while ((${PRT_COUNT} > 1)) && ((${SECONDS_LEFT} > 0)); do
+            echo -e "${INFO} (${PRT_COUNT}/${PRT_TOTAL}) Please wait ${SECONDS_LEFT}s ..."
+            sleep 1
+            SECONDS_LEFT=$((${SECONDS_LEFT} - 1))
+        done
+        echo "------------------------------------------------------------------------"
+        echo "To connect to this session copy and paste the following into a terminal:"
+        echo -e "${Green_font_prefix}$SSH_CMD${Font_color_suffix}"
+        echo -e "TIPS: Run 'touch ${CONTINUE_FILE}' to continue to the next step."
+        echo "------------------------------------------------------------------------"
+        PRT_COUNT=$((${PRT_COUNT} + 1))
+    done
+else
+    echo "${ERRORS_LOG}"
+    exit 4
+fi
+
+while [[ -n $(ps aux | grep ngrok) ]]; do
+    sleep 1
+    if [[ -e ${CONTINUE_FILE} ]]; then
+        echo -e "${INFO} Continue to the next step."
+        exit 0
+    fi
+done
